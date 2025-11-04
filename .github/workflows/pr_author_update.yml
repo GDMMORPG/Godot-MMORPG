@@ -25,7 +25,7 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_USER: ${{ github.event.pull_request.user.login }}
-        run: python scripts/update_authors.py
+        run: python .github/scripts/update_authors.py
 
       - name: Commit and push changes
         run: |
