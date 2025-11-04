@@ -2,9 +2,10 @@ name: Update AUTHORS
 
 permissions:
   contents: write
+  pull-requests: read
 
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
     branches: [main]
 
