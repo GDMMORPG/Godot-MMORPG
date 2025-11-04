@@ -44,3 +44,6 @@ Special thanks to all contributors who support the project by testing, providing
 
 *Want to contribute?*  
 Check out the [CONTRIBUTING.md](https://github.com/GDMMORPG/Godot-MMORPG?tab=contributing-ov-file) file and join the conversation on our community channels.
+- [Brandon Smith](https://github.com/bsmithcompsci)
+> PRs: 
+> [#16](https://github.com/GDMMORPG/Godot-MMORPG/pull/16)
