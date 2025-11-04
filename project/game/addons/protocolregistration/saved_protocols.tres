@@ -1,0 +1,7 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://b7qqgoyh0osdn"]
+
+[ext_resource type="Script" uid="uid://c1v2v4xd4rj8e" path="res://addons/protocolregistration/custom_protocols.gd" id="1_62m00"]
+
+[resource]
+script = ExtResource("1_62m00")
+protocols = Array[String](["gdmmo"])

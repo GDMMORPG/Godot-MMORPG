@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://g6hu1swdc0kc"]
+
+[ext_resource type="PackedScene" uid="uid://bq7jau3uxhgc3" path="res://scenes/ui/ui_login.tscn" id="1_frse4"]
+[ext_resource type="PackedScene" uid="uid://dvs72vmcu3mgp" path="res://scenes/ui/ui_credits.tscn" id="2_e8ckn"]
+[ext_resource type="Script" uid="uid://bwv31k4ytvive" path="res://scripts/client/ui/version_label.gd" id="3_8q002"]
+
+[node name="LoginScreen" type="Node"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Login" parent="CanvasLayer" instance=ExtResource("1_frse4")]
+
+[node name="Credits" parent="CanvasLayer" instance=ExtResource("2_e8ckn")]
+visible = false
+
+[node name="VersionContainer" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -95.0
+offset_top = -46.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VersionContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/VersionContainer/HBoxContainer"]
+layout_mode = 2
+text = "v1.0.0 (Editor)"
+script = ExtResource("3_8q002")
+
+[node name="Button" type="Button" parent="CanvasLayer/VersionContainer/HBoxContainer"]
+layout_mode = 2
+text = "Credits"

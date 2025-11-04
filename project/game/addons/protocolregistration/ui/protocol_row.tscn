@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://wrud8yyjd75h"]
+
+[ext_resource type="Script" uid="uid://ddiilpbpxo57h" path="res://addons/protocolregistration/ui/protocol_row.gd" id="1_1ow5l"]
+
+[node name="HBoxContainer" type="HBoxContainer"]
+script = ExtResource("1_1ow5l")
+
+[node name="TextEdit" type="TextEdit" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "myapp"
+scroll_fit_content_height = true
+scroll_fit_content_width = true
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+text = "🗑️"
+flat = true
+
+[connection signal="pressed" from="Button" to="." method="_on_request_delete"]

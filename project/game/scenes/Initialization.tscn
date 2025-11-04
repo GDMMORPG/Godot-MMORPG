@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://b5l244eqviify"]
+
+[ext_resource type="PackedScene" uid="uid://g6hu1swdc0kc" path="res://scenes/login_screen.tscn" id="1_78sdw"]
+[ext_resource type="Script" uid="uid://sb6ph28lpek5" path="res://scripts/shared/editor/context_scene_loader.gd" id="1_qaelk"]
+
+[node name="Initialization" type="Node"]
+
+[node name="ClientLoad" parent="." instance=ExtResource("1_78sdw")]
+script = ExtResource("1_qaelk")
+context = 1
+append_scene = "uid://g6hu1swdc0kc"
+disable_saving = true
+
+[editable path="ClientLoad"]

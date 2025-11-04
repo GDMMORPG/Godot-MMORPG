@@ -1,0 +1,144 @@
+# CREDITS.yaml
+# This file contains the credits for the Godot MMORPG project.
+#
+# Each project has roles, and each role has members with optional contact details.
+# To meet Attribution requirements, please leave the "Godot MMORPG" project and its members intact.
+# If you wish to extend your project in the credits, please add our project above the Godot MMORPG project, and follow the same format.
+#
+# Our member format is:
+#   Member Name: # {} if no details
+#       github: "GitHub Profile URL" # Optional
+#       linkedin: "LinkedIn Profile URL" # Optional
+#       twitter: "Twitter Profile URL"  # Optional
+#       website: "Personal Website URL"  # Optional
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+# My Project:
+#   Project Lead:
+#     description: "Oversees project vision, coordinates development teams, and ensures milestone delivery for My Project"
+#     members:
+#       Your Name:
+#         github: "https://github.com/yourusername"
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+# Attribution Requirement - Special Thank you to the Godot MMORPG Development Community.
+Godot MMORPG:
+  Project Lead:
+    description: "Oversees project vision, coordinates development teams, and ensures milestone delivery for the ARPG MMO"
+    members:
+      Brandon Smith:
+        linkedin: "https://www.linkedin.com/in/brandon-smith-compsci/"
+        github: "https://github.com/bsmithcompsci"
+        twitter: "https://twitter.com/bsmithcompsci"
+  
+  Lead Developer:
+    description: "Leads the development team, architects core systems, and ensures code quality for the ARPG MMO"
+    members:
+      Alice Johnson:
+        github: "https://github.com/alicejohnson"
+        linkedin: "https://www.linkedin.com/in/alicejohnsondev/"
+        twitter: "https://twitter.com/alicejohnson"
+
+  Lead Game Designer:
+    description: "Designs game mechanics, systems, and player experiences for the ARPG MMO"
+    members:
+      Michael Lee:
+        github: "https://github.com/michaellee"
+        linkedin: "https://www.linkedin.com/in/michaelleegamedesign/"
+        website: "https://michaelleegamedesign.com"
+  
+  Art Director:
+    description: "Oversees visual style, art production, and asset integration for the ARPG MMO"
+    members:
+      Sarah Kim:
+        github: "https://github.com/sarahkim"
+        linkedin: "https://www.linkedin.com/in/sarahkimart/"
+        twitter: "https://twitter.com/sarahkimart"
+        website: "https://sarahkimart.com"
+  
+  Engineers:
+    description: "Develops core systems, gameplay mechanics, and tools for the ARPG MMO"
+    members:
+      James Wilson:
+        github: "https://github.com/jameswilson"
+        linkedin: "https://www.linkedin.com/in/jameswilsondev/"
+        twitter: "https://twitter.com/jameswilsondev"
+        website: "https://jameswilsondev.com"
+      Linda Martinez:
+        github: "https://github.com/lindamartinez"
+        linkedin: "https://www.linkedin.com/in/lindamartinezdev/"
+        twitter: "https://twitter.com/lindamartinezdev"
+        website: "https://lindamartinezdev.com"
+  
+  3D Artists:
+    description: "Creates 3D models, textures, and animations for the ARPG MMO"
+    members:
+      Robert Garcia:
+        github: "https://github.com/robertgarcia"
+        linkedin: "https://www.linkedin.com/in/robertgarciaart/"
+        twitter: "https://twitter.com/robertgarciaart"
+        website: "https://robertgarciaart.com"
+      Maria Rodriguez:
+        github: "https://github.com/mariarodriguez"
+        linkedin: "https://www.linkedin.com/in/mariarodriguezart/"
+        twitter: "https://twitter.com/mariarodriguezart"
+        website: "https://mariarodriguezart.com"
+    
+  2D Artists:
+    description: "Designs 2D assets, UI elements, and concept art for the ARPG MMO"
+    members:
+      William Hernandez:
+        github: "https://github.com/williamhernandez"
+        linkedin: "https://www.linkedin.com/in/williamhernandezart/"
+        twitter: "https://twitter.com/williamhernandezart"
+        website: "https://williamhernandezart.com"
+      Elizabeth Lopez:
+        github: "https://github.com/elizabethlopez"
+        linkedin: "https://www.linkedin.com/in/elizabethlopezart/"
+        twitter: "https://twitter.com/elizabethlopezart"
+        website: "https://elizabethlopezart.com"
+  
+  Level Designers:
+    description: "Designs and builds game levels, environments, and maps for the ARPG MMO"
+    members:
+      Christopher Gonzalez:
+        github: "https://github.com/christophergonzalez"
+        linkedin: "https://www.linkedin.com/in/christophergonzalez/"
+        twitter: "https://twitter.com/christophergonzalez"
+        website: "https://christophergonzalez.com"
+
+  Sound Designers:
+    description: "Creates and implements sound effects and music for the ARPG MMO"
+    members:
+      David Brown:
+        github: "https://github.com/davidbrown"
+        linkedin: "https://www.linkedin.com/in/davidbrownmusic/"
+        twitter: "https://twitter.com/davidbrownmusic"
+        website: "https://davidbrownmusic.com"
+      Emily Davis: 
+        github: "https://github.com/emilydavis"
+        linkedin: "https://www.linkedin.com/in/emilydavis/"
+        twitter: "https://twitter.com/emilydavis"
+        website: "https://emilydavis.com"
+
+  Game Designers:
+    description: "Designs gameplay systems, quests, and player progression for the ARPG MMO"
+    members:
+      Daniel Miller:
+        github: "https://github.com/danielmiller"
+        linkedin: "https://www.linkedin.com/in/danielmiller/"
+        twitter: "https://twitter.com/danielmiller"
+        website: "https://danielmiller.com"
+      Sophia Wilson:
+        github: "https://github.com/sophiawilson"
+        linkedin: "https://www.linkedin.com/in/sophiawilson/"
+        twitter: "https://twitter.com/sophiawilson"
+        website: "https://sophiawilson.com"
+
+  QA Testers:
+    description: "Tests game features, identifies bugs, and ensures quality for the ARPG MMO"
+    members:
+      Matthew Moore:
+        github: "https://github.com/matthewmoore"
+        linkedin: "https://www.linkedin.com/in/matthewmoore/"
+        twitter: "https://twitter.com/matthewmoore"
+        website: "https://matthewmoore.com"

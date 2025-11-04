@@ -1,0 +1,37 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="GDMMORPG"
+config/version="1.0.0"
+run/main_scene="uid://b5l244eqviify"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="GDMMORPG"
+config/features=PackedStringArray("4.5", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+ContextInit="*res://scripts/shared/autorun/context_init.gd"
+AuthAPI="*res://addons/oauth/AuthAPI.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/_internal_networksettings/plugin.cfg", "res://addons/awaitable_http_request/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/oauth/plugin.cfg", "res://addons/protocolregistration/plugin.cfg", "res://addons/quickanimationexports/plugin.cfg", "res://addons/simpleassetplacer/plugin.cfg", "res://addons/sky_3d/plugin.cfg", "res://addons/terrain_3d/plugin.cfg", "res://addons/yaml/plugin.cfg")
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true
+occlusion_culling/use_occlusion_culling=true
