@@ -11,5 +11,8 @@
 		"editor.quickSuggestions": {
 			"strings": "on"
 		}
-	}
+	},
+	"python-env.workspaceSearchPaths": [
+		".github/scripts"
+	]
 }
