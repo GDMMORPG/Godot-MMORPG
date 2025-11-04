@@ -24,7 +24,7 @@ jobs:
         python-version: '3.x'
 
     - name: Install dependencies
-      run: pip install PyGithub
+      run: pip install -r .github/scripts/requirements.txt
 
     - name: Run AUTHORS update script
       env:
