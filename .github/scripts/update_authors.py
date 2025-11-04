@@ -1,6 +1,7 @@
 import os
 import subprocess
 from pathlib import Path
+import json
 
 AUTHORS_FILE = Path("AUTHORS.md")
 
@@ -85,5 +86,36 @@ def get_merged_pr_info() -> tuple[str, str, str, str]:
 	return username, profile_url, pr_number, category
 
 if __name__ == "__main__":
+	# Verify that GITHUB_TOKEN is set, and has authorization to push changes.
+	if not os.getenv("GITHUB_TOKEN"):
+		print("❌ GITHUB_TOKEN is not set. Exiting without updating AUTHORS.md.")
+		exit(1)
+
+	# Verify has write access
+	resp = subprocess.run(
+		["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "-H",
+		 f"Authorization: Bearer {os.getenv('GITHUB_TOKEN')}", "https://api.github.com/repos/GDMMORPG/Godot-MMORPG"],
+		capture_output=True,
+		text=True
+	)
+	print(resp.stdout)
+	# Status code will be at the end of stdout
+	if not resp.stdout.endswith("200"):
+		print("❌ GITHUB_TOKEN does not have access to push changes. Exiting without updating AUTHORS.md.")
+		exit(1)
+	
+	# Get the JSON Response
+	split_output = resp.stdout.splitlines()
+	json_data = "\n".join(split_output[:-1])
+	to_json = json.loads(json_data)
+	permissions = to_json.get("permissions", {})
+	if not permissions.get("pull", False):
+		print("❌ GITHUB_TOKEN does not have pull permissions. Exiting without updating AUTHORS.md.")
+		exit(1)
+	if not permissions.get("push", False):
+		print("❌ GITHUB_TOKEN does not have push permissions. Exiting without updating AUTHORS.md.")
+		exit(1)
+
+	# Proceed to update AUTHORS.md
 	username, profile_url, pr_number, category = get_merged_pr_info()
 	update_authors_md(username, profile_url, pr_number, category)
