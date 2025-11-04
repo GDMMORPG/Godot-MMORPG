@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: gdmmorpg
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Cache Service
+  # ----------------------------------------------------------------
+  # KeyDB - Redis-compatible with better performance
+  # cache:
+  #   image: eqalpha/keydb:latest
+  #   container_name: keydb_cache
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - cache_data:/data
+
+  # Or Valkey - Redis fork by Linux Foundation
+  cache:
+    image: valkey/valkey:latest
+    container_name: valkey_cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache_data:/data
+
+  # Or DragonflyDB - Modern Redis alternative
+  # cache:
+  #   image: docker.dragonflydb.io/dragonflydb/dragonfly
+  #   container_name: dragonfly_cache
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - cache_data:/data
+
+volumes:
+  postgres_data:
+  cache_data:
