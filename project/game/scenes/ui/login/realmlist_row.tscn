@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbpb7w7y2m6nt"]
+
+[ext_resource type="Texture2D" uid="uid://d0yi1cmsojhl1" path="res://content/flaticons/flags/united-states.png" id="1_uue28"]
+[ext_resource type="Script" uid="uid://bpyaxwsifo6t6" path="res://scripts/client/ui/realmlist_row_ui.gd" id="1_yj1lo"]
+[ext_resource type="Texture2D" uid="uid://dseqj3r2durnn" path="res://content/material-icons/wifi_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png" id="2_yj1lo"]
+
+[node name="RealmListRow" type="HBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 31.0
+grow_horizontal = 2
+script = ExtResource("1_yj1lo")
+
+[node name="LocationIcon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+tooltip_text = "United States / Los Angeles"
+texture = ExtResource("1_uue28")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="ConnectionIcon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+texture = ExtResource("2_yj1lo")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="NameLabel" type="RichTextLabel" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "Realm server 1"
+fit_content = true
+
+[node name="ConnectButton" type="Button" parent="."]
+layout_mode = 2
+text = "Connect"

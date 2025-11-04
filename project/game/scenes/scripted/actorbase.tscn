@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://cych1pisbeb67"]
+
+[ext_resource type="Script" uid="uid://bdf8cmqppubsx" path="res://scripts/shared/gameplay/actor/actor.gd" id="1_5bcnq"]
+[ext_resource type="Script" uid="uid://cbonnxsj4u61l" path="res://scripts/shared/gameplay/actor/actor_attributes.gd" id="2_qyscu"]
+
+[sub_resource type="Resource" id="Resource_xlddv"]
+script = ExtResource("2_qyscu")
+metadata/_custom_type_script = "uid://cbonnxsj4u61l"
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_io8um"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_io8um"]
+
+[node name="Actor" type="CharacterBody3D"]
+collision_layer = 2
+
+[node name="Actor" type="Node" parent="." node_paths=PackedStringArray("character")]
+script = ExtResource("1_5bcnq")
+character = NodePath("..")
+attributes = SubResource("Resource_xlddv")
+metadata/_custom_type_script = "uid://bdf8cmqppubsx"
+
+[node name="CollisionMesh" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_io8um")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionMesh"]
+mesh = SubResource("CapsuleMesh_io8um")
+skeleton = NodePath("../..")
+
+[node name="Name" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+visible = false
+billboard = 1
+text = "[GM] My Name
+<Clan>"
+font_size = 48

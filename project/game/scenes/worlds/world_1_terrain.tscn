@@ -1,0 +1,232 @@
+[gd_scene load_steps=28 format=3 uid="uid://ghfe7qcvdntd"]
+
+[ext_resource type="Script" uid="uid://dbndw8p05yam7" path="res://addons/terrain_3d/utils/terrain_3d_objects.gd" id="1_8y3c4"]
+[ext_resource type="PackedScene" uid="uid://b14krj8re70r8" path="res://scenes/objects/buildings/placeholder_building.tscn" id="2_24h0t"]
+[ext_resource type="Shader" uid="uid://c52q5em812hiw" path="res://scripts/water/water.gdshader" id="3_1nthl"]
+[ext_resource type="Script" uid="uid://drno687lgcfbe" path="res://scripts/water/WaterGridMap.gd" id="4_c0h7j"]
+[ext_resource type="Script" uid="uid://dh8j285h732si" path="res://scripts/shared/grids/zone/ZoneGridMap.gd" id="5_1nthl"]
+[ext_resource type="Script" uid="uid://ckf4k0ctbpdq4" path="res://scripts/shared/grids/zone/ZoneData.gd" id="6_1nthl"]
+
+[sub_resource type="Gradient" id="Gradient_io8um"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_kqs1s"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_32lhk"]
+noise = SubResource("FastNoiseLite_kqs1s")
+color_ramp = SubResource("Gradient_io8um")
+seamless = true
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_7g83o"]
+_shader_parameters = {
+&"bias_distance": 512.0,
+&"blend_sharpness": 0.5,
+&"depth_blur": 0.0,
+&"enable_macro_variation": true,
+&"enable_projection": true,
+&"flat_terrain_normals": false,
+&"macro_variation1": Color(1, 1, 1, 1),
+&"macro_variation2": Color(1, 1, 1, 1),
+&"macro_variation_slope": 0.333,
+&"mipmap_bias": 1.0,
+&"noise1_angle": 0.0,
+&"noise1_offset": Vector2(0.5, 0.5),
+&"noise1_scale": 0.04,
+&"noise2_scale": 0.076,
+&"noise_texture": SubResource("NoiseTexture2D_32lhk"),
+&"projection_threshold": 0.8
+}
+world_background = 0
+show_region_grid = true
+show_instancer_grid = true
+show_vertex_grid = true
+show_checkered = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d1c63"]
+transparency = 4
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_1lgw5"]
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_d1c63")
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_hlk0d"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_1lgw5")])
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_7g83o"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d1c63"]
+noise = SubResource("FastNoiseLite_7g83o")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1lgw5"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hlk0d"]
+noise = SubResource("FastNoiseLite_1lgw5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0uv0p"]
+render_priority = 0
+shader = ExtResource("3_1nthl")
+shader_parameter/surfacecolour = Color(0, 0, 1, 1)
+shader_parameter/volumecolour = Color(0, 0, 0.75686276, 1)
+shader_parameter/AirIOR = 1.0
+shader_parameter/IOR = 1.33
+shader_parameter/sampler1speed = Vector2(0.02, 0)
+shader_parameter/sampler2speed = Vector2(0, 0.02)
+shader_parameter/samplermix = 0.5
+shader_parameter/samplerscale = Vector2(0.1, 0.1)
+shader_parameter/normal1tex = SubResource("NoiseTexture2D_d1c63")
+shader_parameter/normal2tex = SubResource("NoiseTexture2D_hlk0d")
+shader_parameter/normalstrength = 1.0
+shader_parameter/heightstrength = 0.12
+shader_parameter/refrationamount = 0.0
+shader_parameter/fog_underwater = false
+shader_parameter/edge_size = 0.1
+shader_parameter/foam_or_fade = false
+shader_parameter/far_clip = 50.0
+shader_parameter/steps = 512
+shader_parameter/ssr_screen_fade = 0.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_1nthl"]
+material = SubResource("ShaderMaterial_0uv0p")
+size = Vector3(32, 1, 32)
+
+[sub_resource type="MeshLibrary" id="MeshLibrary_c0h7j"]
+item/0/name = ""
+item/0/mesh = SubResource("BoxMesh_1nthl")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/mesh_cast_shadow = 1
+item/0/shapes = []
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1nthl"]
+transparency = 1
+no_depth_test = true
+albedo_color = Color(0, 0, 0, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_c0h7j"]
+material = SubResource("StandardMaterial3D_1nthl")
+size = Vector3(32, 32, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oesd3"]
+transparency = 1
+no_depth_test = true
+albedo_color = Color(0.17254902, 0, 0.8901961, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x3u62"]
+material = SubResource("StandardMaterial3D_oesd3")
+size = Vector3(32, 32, 1)
+
+[sub_resource type="MeshLibrary" id="MeshLibrary_60alf"]
+item/0/name = "DevLand"
+item/0/mesh = SubResource("BoxMesh_c0h7j")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/mesh_cast_shadow = 1
+item/0/shapes = []
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+item/1/name = "Land of Zerin"
+item/1/mesh = SubResource("BoxMesh_x3u62")
+item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/mesh_cast_shadow = 1
+item/1/shapes = []
+item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/navigation_layers = 1
+
+[sub_resource type="Resource" id="Resource_60alf"]
+script = ExtResource("6_1nthl")
+name = "DevLand"
+metadata/_custom_type_script = "uid://ckf4k0ctbpdq4"
+
+[sub_resource type="Resource" id="Resource_srej5"]
+script = ExtResource("6_1nthl")
+name = "Land of Zerin"
+editor_color = Color(0.17254902, 0, 0.8901961, 1)
+metadata/_custom_type_script = "uid://ckf4k0ctbpdq4"
+
+[node name="SceneRoot" type="Node"]
+
+[node name="Terrain3D" type="Terrain3D" parent="."]
+data_directory = "res://data/terrain/isle_01"
+material = SubResource("Terrain3DMaterial_7g83o")
+assets = SubResource("Terrain3DAssets_hlk0d")
+show_grid = true
+show_region_grid = true
+show_instancer_grid = true
+show_vertex_grid = true
+show_checkered = true
+top_level = true
+metadata/_edit_lock_ = true
+
+[node name="WaterGridMap" type="GridMap" parent="."]
+visible = false
+mesh_library = SubResource("MeshLibrary_c0h7j")
+cell_size = Vector3(32, 1, 32)
+data = {
+"cells": PackedInt32Array(65535, 65535, 0)
+}
+script = ExtResource("4_c0h7j")
+water_material = SubResource("ShaderMaterial_0uv0p")
+metadata/_custom_type_script = "uid://drno687lgcfbe"
+metadata/_edit_lock_ = true
+
+[node name="Terrain3DObjects" type="Node3D" parent="."]
+script = ExtResource("1_8y3c4")
+metadata/_custom_type_script = "uid://dbndw8p05yam7"
+metadata/_edit_lock_ = true
+
+[node name="Node3D" parent="Terrain3DObjects" instance=ExtResource("2_24h0t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 313.72528, 3.0517578e-05, -336.17728)
+
+[node name="ZoneGridMap" type="GridMap" parent="."]
+visible = false
+mesh_library = SubResource("MeshLibrary_60alf")
+cell_size = Vector3(32, 1, 32)
+data = {
+"cells": PackedInt32Array(4, 65534, 786433, 4, 65533, 786433, 4, 65532, 786433, 4, 65531, 786433, 4, 65530, 786433, 4, 65529, 786433, 4, 65528, 786433, 4, 65527, 786433, 4, 65526, 786433, 4, 65525, 786433, 4, 65524, 786433, 4, 65523, 786433, 4, 65522, 786433, 4, 65521, 786433, 5, 65521, 786433, 6, 65521, 786433, 7, 65521, 786433, 8, 65521, 786433, 9, 65521, 786433, 10, 65521, 786433, 11, 65521, 786433, 12, 65521, 786433, 13, 65521, 786433, 14, 65521, 786433, 14, 65522, 786433, 14, 65523, 786433, 14, 65524, 786433, 14, 65525, 786433, 14, 65526, 786433, 14, 65527, 786433, 14, 65528, 786433, 14, 65529, 786433, 14, 65530, 786433, 14, 65531, 786433, 14, 65532, 786433, 14, 65533, 786433, 14, 65534, 786433, 13, 65534, 786433, 12, 65534, 786433, 11, 65534, 786433, 10, 65534, 786433, 9, 65534, 786433, 8, 65534, 786433, 7, 65534, 786433, 6, 65534, 786433, 5, 65534, 786433, 5, 65533, 786433, 6, 65533, 786433, 7, 65533, 786433, 8, 65533, 786433, 9, 65533, 786433, 10, 65533, 786433, 11, 65533, 786433, 12, 65533, 786433, 13, 65533, 786433, 13, 65532, 786433, 13, 65531, 786433, 13, 65530, 786433, 13, 65529, 786433, 13, 65528, 786433, 13, 65527, 786433, 13, 65526, 786433, 13, 65525, 786433, 13, 65524, 786433, 13, 65523, 786433, 13, 65522, 786433, 12, 65522, 786433, 11, 65522, 786433, 10, 65522, 786433, 9, 65522, 786433, 8, 65522, 786433, 7, 65522, 786433, 6, 65522, 786433, 6, 65523, 786433, 5, 65523, 786433, 5, 65524, 786433, 5, 65525, 786433, 5, 65522, 786433, 11, 65523, 786433, 10, 65523, 786433, 9, 65523, 786433, 8, 65523, 786433, 7, 65524, 786433, 6, 65524, 786433, 7, 65523, 786433, 12, 65523, 786433, 12, 65524, 786433, 11, 65524, 786433, 11, 65525, 786433, 10, 65525, 786433, 10, 65524, 786433, 8, 65524, 786433, 6, 65525, 786433, 9, 65524, 786433, 8, 65525, 786433, 7, 65525, 786433, 7, 65526, 786433, 6, 65526, 786433, 8, 65526, 786433, 7, 65527, 786433, 6, 65527, 786433, 5, 65527, 786433, 5, 65526, 786433, 6, 65528, 786433, 6, 65529, 786433, 9, 65525, 786433, 7, 65528, 786433, 8, 65527, 786433, 9, 65526, 786433, 10, 65526, 786433, 9, 65527, 786433, 8, 65528, 786433, 7, 65529, 786433, 6, 65530, 786433, 5, 65528, 786433, 5, 65529, 786433, 5, 65530, 786433, 5, 65531, 786433, 5, 65532, 786433, 6, 65531, 786433, 6, 65532, 786433, 7, 65530, 786433, 7, 65531, 786433, 8, 65529, 786433, 8, 65530, 786433, 8, 65531, 786433, 9, 65529, 786433, 9, 65528, 786433, 9, 65530, 786433, 9, 65531, 786433, 10, 65528, 786433, 10, 65527, 786433, 11, 65527, 786433, 10, 65529, 786433, 11, 65526, 786433, 12, 65526, 786433, 12, 65525, 786433, 12, 65527, 786433, 12, 65528, 786433, 12, 65529, 786433, 12, 65530, 786433, 12, 65531, 786433, 12, 65532, 786433, 11, 65530, 786433, 11, 65529, 786433, 11, 65531, 786433, 10, 65531, 786433, 10, 65532, 786433, 10, 65530, 786433, 11, 65528, 786433, 11, 65532, 786433, 9, 65532, 786433, 8, 65532, 786433, 7, 65532, 786433)
+}
+script = ExtResource("5_1nthl")
+zones = Array[ExtResource("6_1nthl")]([SubResource("Resource_60alf"), SubResource("Resource_srej5")])
+transparency = 0.6
+metadata/_custom_type_script = "uid://dh8j285h732si"
+
+[node name="StartingSpawns" type="Node" parent="."]
+
+[node name="Atherian0" type="Marker3D" parent="StartingSpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 285.91068, 0.3016789, -317.58478)
+
+[node name="Atherian1" type="Marker3D" parent="StartingSpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 285.91068, 0.3016789, -312.58478)
+
+[node name="Atherian2" type="Marker3D" parent="StartingSpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 285.91068, 0.3016789, -305.58478)
+
+[node name="Varkuun0" type="Marker3D" parent="StartingSpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 348.91068, 0.3016789, -317.58478)
+
+[node name="Varkuun1" type="Marker3D" parent="StartingSpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 348.91068, 0.3016789, -312.58478)
+
+[node name="Varkuun2" type="Marker3D" parent="StartingSpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 348.91068, 0.3016789, -305.58478)
