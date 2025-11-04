@@ -2,14 +2,58 @@ import os
 import subprocess
 from pathlib import Path
 import json
+import time
+from git import Repo
+import requests
 
+import jwt
+import argparse
+
+# --- Configuration ---
 AUTHORS_FILE = Path("AUTHORS.md")
+ORG = "GDMMORPG"
+REPO = "Godot-MMORPG"
 
-ENGINEERING_EXTENSIONS = [".gd", ".go", ".cpp", ".h", ".cs", ".py", ".sh", ".yml", ".yaml", ".json", ".xml", ".ini", ".cfg", ".toml"]
-ART_EXTENSIONS = [".glb", ".gltf", ".fbx", ".png", ".jpg", ".jpeg", ".tga", ".wav", ".mp3", ".ogg", ".psd", ".xcf"]
-DESIGN_EXTENSIONS = [".tscn", ".tres", ".cfg", ".ini", ".json", ".xml"]
-COMMUNITY_EXTENSIONS = []
+ENGINEERING_EXTENSIONS 	= [".gd", ".go", ".cpp", ".h", ".cs", ".rs", ".py", ".sh", ".bat", ".yml", ".yaml", ".sql", ".json", ".xml", ".ini", ".cfg", ".toml"]
+ENGINEERING_CRITRIA 	= ["added", "modified", "removed", "renamed"]
+ART_EXTENSIONS 			= [".glb", ".gltf", ".fbx", ".png", ".jpg", ".jpeg", ".tga", ".wav", ".mp3", ".ogg", ".psd", ".xcf"]
+ART_CRITRIA 			= ["added", "modified", "removed", "renamed"]
+DESIGN_EXTENSIONS 		= [".tscn", ".tres"]
+DESIGN_CRITRIA 			= ["added", "modified", "removed", "renamed"]
+COMMUNITY_EXTENSIONS 	= [".md", ".translation"]
+COMMUNITY_CRITRIA 		= ["added", "modified", "removed", "renamed"]
 
+
+# --- Auth using GitHub App ---
+def get_installation_token():
+	"""Generate a GitHub App installation token."""
+
+	if "APP_ID" not in os.environ:
+		raise EnvironmentError("APP_ID is not set in environment variables.")
+	if "INSTALLATION_ID" not in os.environ:
+		raise EnvironmentError("INSTALLATION_ID is not set in environment variables.")
+	if "PRIVATE_KEY" not in os.environ:
+		raise EnvironmentError("PRIVATE_KEY is not set in environment variables.")
+
+	app_id = os.environ["APP_ID"]
+	installation_id = os.environ["INSTALLATION_ID"]
+	private_key = os.environ["PRIVATE_KEY"].encode()
+
+	payload = {
+		"iat": int(time.time()) - 60,
+		"exp": int(time.time()) + (10 * 60),
+		"iss": app_id,
+	}
+
+	jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
+
+	headers = {"Authorization": f"Bearer {jwt_token}", "Accept": "application/vnd.github+json"}
+	url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
+	res = requests.post(url, headers=headers)
+	res.raise_for_status()
+	return res.json()["token"]
+
+# --- Helper Functions ---
 def detect_category(files_changed: list[str]) -> str:
 	"""Determine which category best matches the PR changes."""
 	categories = {"Engineering": 0, "Art": 0, "Design": 0, "Community & Support": 0}
@@ -30,11 +74,74 @@ def detect_category(files_changed: list[str]) -> str:
 	# Return the dominant category
 	return max(categories, key=categories.get)
 
-def update_authors_md(username: str, profile_url: str, pr_number: str, category: str):
+def update_authors_md(pr_number: str, is_dry_run: bool = False):
 	"""Insert or update a contributor under the right category in AUTHORS.md."""
+	repo = Repo(".")
+	token = get_installation_token()
+	headers = {
+		"Authorization": f"Bearer {token}",
+		"Accept": "application/vnd.github+json",
+	}
+
+	# Fetch PR details.
+	# Todo: Retrieve PR details beyond the pull requester, such as co-authors.
+	pr = requests.get(
+		f"https://api.github.com/repos/{ORG}/{REPO}/pulls/{pr_number}",
+		headers=headers,
+	).json()
+
+	username = pr["user"]["login"]
+
+	files = requests.get(
+		f"https://api.github.com/repos/{ORG}/{REPO}/pulls/{pr_number}/files",
+		headers=headers,
+	).json()
+
+	account_details = requests.get(
+		f"https://api.github.com/users/{username}",
+		headers=headers,
+	).json()
+
+	# Aggregate authors and their PRs
+	print(f"Processing PR #{pr_number} by user '{pr['user']['login']}'")
+	# print(f"Files changed in PR: {[file['filename'] for file in files]}")
+	print(f"Number of files changed: {len(files)}")
+	# print(f"PR Details: {json.dumps(pr, indent=2)}")
+	# print(f"Account Details: {json.dumps(account_details, indent=2)}")
+	display_name = account_details.get("name") or username 
+	profile_url = pr["user"]["html_url"]
+	contribution_categories: dict[str, int] = dict()
+	for file in files:
+		filename: str = file["filename"].lower()
+		status: str = file["status"].lower()
+
+		contribution_categories.setdefault("Engineering", 0)
+		contribution_categories.setdefault("Art", 0)
+		contribution_categories.setdefault("Design", 0)
+		contribution_categories.setdefault("Community & Support", 0)
+
+		if any(filename.endswith(ext) for ext in ENGINEERING_EXTENSIONS) and status in ENGINEERING_CRITRIA:
+			contribution_categories["Engineering"] += 1
+		if any(filename.endswith(ext) for ext in ART_EXTENSIONS) and status in ART_CRITRIA:
+			contribution_categories["Art"] += 1
+		if any(filename.endswith(ext) for ext in DESIGN_EXTENSIONS) and status in DESIGN_CRITRIA:
+			contribution_categories["Design"] += 1
+		if any(filename.endswith(ext) for ext in COMMUNITY_EXTENSIONS) and status in COMMUNITY_CRITRIA:
+			contribution_categories["Community & Support"] += 1
+
+	# Determine dominant category
+	category = "Community & Support"
+	if contribution_categories:
+		# Determine the category with the highest contribution count
+		category = max(contribution_categories, key=contribution_categories.get)
+		# Print out the scores for debugging
+		print(f"Contribution scores: {contribution_categories}, selected category: {category}")
+	
+	# Read and update AUTHORS.md
 	content = AUTHORS_FILE.read_text().splitlines()
-	new_line = f"- [{username}]({profile_url})"
-	pr_tag = f"# {pr_number}"
+	contributor_format = f"- [{display_name}]({profile_url})"
+	contributor_ref_format = f"PRs: "
+	contributor_ref_tag_format = f"#{pr_number}"
 
 	# Find category section header
 	try:
@@ -48,74 +155,81 @@ def update_authors_md(username: str, profile_url: str, pr_number: str, category:
 	for i, line in enumerate(content[start_index:], start=start_index):
 		if line.startswith("### "):  # stop at next category
 			break
-		if username in line:
+		if contributor_format in line:
 			existing_idx = i
 			break
+	
+	did_nothing = False
 
 	if existing_idx:
 		# Append new PR tag if not already there
 		j = existing_idx + 1
+		# Find the end of the contributor's PR tags
 		while j < len(content) and content[j].startswith(">"):
-			if pr_tag in content[j]:
+			if contributor_ref_tag_format in content[j]:
+				# PR tag already exists
+				did_nothing = True
 				break
 			j += 1
+		# Insert new PR tag
 		if j == len(content) or not content[j].startswith(">"):
-			content.insert(j, f"> {pr_tag}")
+			content.insert(j, f"> {contributor_ref_tag_format}")
 	else:
 		# Insert a new contributor entry
 		insert_index = start_index
 		while insert_index < len(content) and not content[insert_index].startswith("### "):
 			insert_index += 1
-		content.insert(insert_index, f"- [{username}]({profile_url})")
-		content.insert(insert_index + 1, f"> {pr_tag}")
+		# Insert before the next category or at the end of the section
+		# Insert the contributor
+		content.insert(insert_index, contributor_format)
+		# Insert the PR reference
+		content.insert(insert_index + 1, f"> {contributor_ref_format}")
+		content.insert(insert_index + 2, f"> {contributor_ref_tag_format}")
+		content.insert(insert_index + 3, "")  # Add a blank line for readability
 
+	if did_nothing:
+		print(f"ℹ️  No update needed for {username}")
+		return
+
+	# Write back to AUTHORS.md
 	AUTHORS_FILE.write_text("\n".join(content))
 	print(f"✅ Updated AUTHORS.md for {username} in {category}")
 
-def get_merged_pr_info() -> tuple[str, str, str, str]:
+	# Commit and push changes.
+	repo.git.config("user.name", "github-actions[bot]")
+	repo.git.config("user.email", "github-actions[bot]@users.noreply.github.com")
+	repo.index.add([str(AUTHORS_FILE)])
+	commit_message = f"Update AUTHORS.md: Add {username} for PR #{pr_number}"
+	if repo.is_dirty():
+		if not is_dry_run:
+			repo.index.commit(commit_message)
+			origin = repo.remote(name="origin")
+			origin.push()
+			print(f"🚀 Pushed changes to remote repository.")
+		else:
+			print(f"🧪 Dry run - commit message: {commit_message}")
+			print(f"🧪 Dry run mode: Changes not pushed.")
+
+def get_merged_pr_info() -> str:
 	"""Retrieve merged PR info using GitHub environment variables or git commands."""
 	pr_number = os.getenv("PR_NUMBER")
-	username = os.getenv("PR_USER")
-	profile_url = f"https://github.com/{username}"
 
-	# Get list of changed files
-	diff_cmd = ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"]
-	files_changed = subprocess.check_output(diff_cmd).decode().splitlines()
-	category = detect_category(files_changed)
+	if not pr_number:
+		raise EnvironmentError("PR_NUMBER is not set in environment variables.")
 
-	return username, profile_url, pr_number, category
+	return pr_number
 
+# --- Main Execution ---
 if __name__ == "__main__":
-	# Verify that GITHUB_TOKEN is set, and has authorization to push changes.
-	if not os.getenv("GITHUB_TOKEN"):
-		print("❌ GITHUB_TOKEN is not set. Exiting without updating AUTHORS.md.")
-		exit(1)
-
-	# Verify has write access
-	resp = subprocess.run(
-		["curl", "-s", "-w", "%{http_code}", "-H",
-		 f"Authorization: Bearer {os.getenv('GITHUB_TOKEN')}", "https://api.github.com/repos/GDMMORPG/Godot-MMORPG"],
-		capture_output=True,
-		text=True
-	)
-	print(resp.stdout)
-	# Status code will be at the end of stdout
-	if not resp.stdout.endswith("200"):
-		print("❌ GITHUB_TOKEN does not have access to push changes. Exiting without updating AUTHORS.md.")
-		exit(1)
-	
-	# Get the JSON Response
-	split_output = resp.stdout.splitlines()
-	json_data = "\n".join(split_output[:-1])
-	to_json = json.loads(json_data)
-	permissions = to_json.get("permissions", {})
-	if not permissions.get("pull", False):
-		print("❌ GITHUB_TOKEN does not have pull permissions. Exiting without updating AUTHORS.md.")
-		exit(1)
-	if not permissions.get("push", False):
-		print("❌ GITHUB_TOKEN does not have push permissions. Exiting without updating AUTHORS.md.")
-		exit(1)
-
 	# Proceed to update AUTHORS.md
-	username, profile_url, pr_number, category = get_merged_pr_info()
-	update_authors_md(username, profile_url, pr_number, category)
+	parser = argparse.ArgumentParser(description="Update AUTHORS.md with contributor information")
+	parser.add_argument("--dry-run", action="store_true", help="Use dummy information for testing")
+	args = parser.parse_args()
+	
+	if args.dry_run:
+		pr_number = "9"
+		print("🧪 Running in dry-run mode with dummy data")
+	else:
+		pr_number = get_merged_pr_info()
+	
+	update_authors_md(pr_number, is_dry_run=args.dry_run)
