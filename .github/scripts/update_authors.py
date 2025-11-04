@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
 	# Verify has write access
 	resp = subprocess.run(
-		["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "-H",
+		["curl", "-s", "-w", "%{http_code}", "-H",
 		 f"Authorization: Bearer {os.getenv('GITHUB_TOKEN')}", "https://api.github.com/repos/GDMMORPG/Godot-MMORPG"],
 		capture_output=True,
 		text=True
