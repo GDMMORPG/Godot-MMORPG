@@ -5,6 +5,7 @@ import json
 import time
 from git import Repo
 import requests
+import base64
 
 import jwt
 import argparse
@@ -81,6 +82,7 @@ def update_authors_md(pr_number: str, is_dry_run: bool = False):
 	headers = {
 		"Authorization": f"Bearer {token}",
 		"Accept": "application/vnd.github+json",
+		"X-GitHub-Api-Version": "2022-11-28"
 	}
 
 	# Fetch PR details.
@@ -110,6 +112,7 @@ def update_authors_md(pr_number: str, is_dry_run: bool = False):
 	# print(f"Account Details: {json.dumps(account_details, indent=2)}")
 	display_name = account_details.get("name") or username 
 	profile_url = pr["user"]["html_url"]
+	pr_url = pr["html_url"]
 	contribution_categories: dict[str, int] = dict()
 	for file in files:
 		filename: str = file["filename"].lower()
@@ -141,7 +144,7 @@ def update_authors_md(pr_number: str, is_dry_run: bool = False):
 	content = AUTHORS_FILE.read_text().splitlines()
 	contributor_format = f"- [{display_name}]({profile_url})"
 	contributor_ref_format = f"PRs: "
-	contributor_ref_tag_format = f"#{pr_number}"
+	contributor_ref_tag_format = f"[#{pr_number}]({pr_url})"
 
 	# Find category section header
 	try:
@@ -196,19 +199,35 @@ def update_authors_md(pr_number: str, is_dry_run: bool = False):
 	print(f"✅ Updated AUTHORS.md for {username} in {category}")
 
 	# Commit and push changes.
-	repo.git.config("user.name", "github-actions[bot]")
-	repo.git.config("user.email", "github-actions[bot]@users.noreply.github.com")
 	repo.index.add([str(AUTHORS_FILE)])
 	commit_message = f"Update AUTHORS.md: Add {username} for PR #{pr_number}"
 	if repo.is_dirty():
 		if not is_dry_run:
-			repo.index.commit(commit_message)
-			origin = repo.remote(name="origin")
-			origin.push()
-			print(f"🚀 Pushed changes to remote repository.")
+			content_base64 = base64.b64encode("\n".join(content).encode("utf-8")).decode("utf-8")
+			file_info = requests.get(
+				f"https://api.github.com/repos/{ORG}/{REPO}/contents/{AUTHORS_FILE}",
+				headers=headers,
+			).json()
+			sha = file_info["sha"]
+
+			send_edit = requests.put(
+				f"https://api.github.com/repos/{ORG}/{REPO}/contents/{AUTHORS_FILE}",
+				headers=headers,
+				json={
+					"message": commit_message, 
+					"content": content_base64,
+					"sha": sha,
+				}
+			)
+
+			if send_edit.status_code == 200 or send_edit.status_code == 201:
+				print(f"🚀 Pushed changes to AUTHORS.md with commit: {commit_message}")
+			else:
+				print(f"❌ Failed to push changes: {send_edit.status_code} - {send_edit.json()}")
 		else:
 			print(f"🧪 Dry run - commit message: {commit_message}")
 			print(f"🧪 Dry run mode: Changes not pushed.")
+		
 
 def get_merged_pr_info() -> str:
 	"""Retrieve merged PR info using GitHub environment variables or git commands."""
