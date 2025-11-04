@@ -24,6 +24,10 @@ These contributors played key roles in establishing and maintaining the projectâ
 
 ### Engineering
 
+- [Brandon Smith](https://github.com/bsmithcompsci)
+> PRs: 
+> #13
+
 ### Art
 
 ### Design
